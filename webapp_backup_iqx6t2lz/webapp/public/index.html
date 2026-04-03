@@ -1,0 +1,1460 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>UniWay — Твой путь к первой стажировке</title>
+  <meta name="description" content="UniWay — платформа для студентов, которые ищут стажировки, готовятся к трудоустройству и хотят получить первый опыт.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: { 50: '#eff6ff', 100: '#dbeafe', 200: '#bfdbfe', 300: '#93c5fd', 400: '#60a5fa', 500: '#3b82f6', 600: '#2563eb', 700: '#1d4ed8', 800: '#1e40af', 900: '#1e3a8a' },
+            violet: { 50: '#f5f3ff', 100: '#ede9fe', 200: '#ddd6fe', 300: '#c4b5fd', 400: '#a78bfa', 500: '#8b5cf6', 600: '#7c3aed', 700: '#6d28d9' },
+          },
+          fontFamily: { inter: ['Inter', 'sans-serif'] },
+          animation: {
+            'fade-in': 'fadeIn 0.5s ease-in-out',
+            'slide-up': 'slideUp 0.5s ease-out',
+            'float': 'float 3s ease-in-out infinite',
+          },
+          keyframes: {
+            fadeIn: { '0%': { opacity: '0' }, '100%': { opacity: '1' } },
+            slideUp: { '0%': { transform: 'translateY(20px)', opacity: '0' }, '100%': { transform: 'translateY(0)', opacity: '1' } },
+            float: { '0%, 100%': { transform: 'translateY(0)' }, '50%': { transform: 'translateY(-10px)' } }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    * { font-family: 'Inter', sans-serif; }
+    .gradient-bg { background: linear-gradient(135deg, #1e40af 0%, #7c3aed 50%, #ec4899 100%); }
+    .gradient-text { background: linear-gradient(135deg, #2563eb, #7c3aed); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+    .card-hover { transition: all 0.3s ease; }
+    .card-hover:hover { transform: translateY(-4px); box-shadow: 0 20px 40px rgba(0,0,0,0.1); }
+    .glass { background: rgba(255,255,255,0.1); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.2); }
+    .nav-link { position: relative; }
+    .nav-link::after { content: ''; position: absolute; bottom: -2px; left: 0; width: 0; height: 2px; background: #2563eb; transition: width 0.3s; }
+    .nav-link:hover::after { width: 100%; }
+    .modal-overlay { background: rgba(0,0,0,0.5); backdrop-filter: blur(4px); }
+    .sidebar-active { background: linear-gradient(135deg, #eff6ff, #f5f3ff); border-left: 3px solid #2563eb; }
+    .progress-bar { background: linear-gradient(90deg, #2563eb, #7c3aed); }
+    .tag { display: inline-flex; align-items: center; padding: 2px 10px; border-radius: 20px; font-size: 12px; font-weight: 500; }
+    .scroll-smooth { scroll-behavior: smooth; }
+    .page { display: none; }
+    .page.active { display: block; }
+    .notification { animation: slideInRight 0.3s ease; }
+    @keyframes slideInRight { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+    .skeleton { background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; }
+    @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+    ::-webkit-scrollbar { width: 6px; } ::-webkit-scrollbar-track { background: #f1f5f9; } ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+    .star-rating { color: #f59e0b; }
+    .level-badge-easy { background: #dcfce7; color: #16a34a; }
+    .level-badge-medium { background: #fef3c7; color: #d97706; }
+    .level-badge-hard { background: #fee2e2; color: #dc2626; }
+    .field-icon { width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; }
+    @media (max-width: 768px) {
+      .sidebar { position: fixed; left: -280px; top: 0; height: 100vh; z-index: 50; transition: left 0.3s; }
+      .sidebar.open { left: 0; }
+      .sidebar-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 40; }
+      .sidebar-overlay.visible { display: block; }
+    }
+  </style>
+</head>
+<body class="bg-gray-50 text-gray-900">
+
+<!-- Notification Container -->
+<div id="notifications" class="fixed top-4 right-4 z-50 space-y-2"></div>
+
+<!-- NAVBAR -->
+<nav class="bg-white border-b border-gray-100 sticky top-0 z-40 shadow-sm">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex items-center justify-between h-16">
+      <div class="flex items-center gap-8">
+        <a href="#" onclick="navigate('home')" class="flex items-center gap-2 cursor-pointer">
+          <div class="w-8 h-8 gradient-bg rounded-lg flex items-center justify-center">
+            <i class="fas fa-graduation-cap text-white text-sm"></i>
+          </div>
+          <span class="text-xl font-bold gradient-text">UniWay</span>
+        </a>
+        <div class="hidden md:flex items-center gap-6">
+          <a onclick="navigate('internships')" class="nav-link text-gray-600 hover:text-primary-600 text-sm font-medium cursor-pointer transition-colors">Стажировки</a>
+          <a onclick="navigate('tasks')" class="nav-link text-gray-600 hover:text-primary-600 text-sm font-medium cursor-pointer transition-colors">Задания</a>
+          <a onclick="navigate('resume')" class="nav-link text-gray-600 hover:text-primary-600 text-sm font-medium cursor-pointer transition-colors">Резюме</a>
+          <a onclick="navigate('interview')" class="nav-link text-gray-600 hover:text-primary-600 text-sm font-medium cursor-pointer transition-colors">Собеседование</a>
+        </div>
+      </div>
+      <div class="flex items-center gap-3">
+        <div id="auth-buttons" class="flex items-center gap-3">
+          <button onclick="navigate('login')" class="text-sm font-medium text-gray-600 hover:text-primary-600 transition-colors">Войти</button>
+          <button onclick="navigate('register')" class="bg-primary-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-primary-700 transition-colors">Регистрация</button>
+        </div>
+        <div id="user-menu" class="hidden flex items-center gap-3">
+          <button onclick="navigate('dashboard')" class="flex items-center gap-2 text-sm text-gray-700 hover:text-primary-600 transition-colors">
+            <div class="w-8 h-8 bg-gradient-to-br from-primary-500 to-violet-500 rounded-full flex items-center justify-center text-white text-xs font-bold" id="user-avatar">U</div>
+            <span id="user-name-nav" class="hidden md:block font-medium">Профиль</span>
+          </button>
+        </div>
+        <button id="mobile-menu-btn" class="md:hidden p-2 rounded-lg text-gray-500 hover:bg-gray-100" onclick="toggleMobileMenu()">
+          <i class="fas fa-bars"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+  <!-- Mobile Menu -->
+  <div id="mobile-menu" class="hidden md:hidden border-t border-gray-100 bg-white">
+    <div class="px-4 py-3 space-y-2">
+      <a onclick="navigate('internships');toggleMobileMenu()" class="block py-2 text-gray-700 font-medium cursor-pointer"><i class="fas fa-briefcase mr-2 text-primary-500"></i>Стажировки</a>
+      <a onclick="navigate('tasks');toggleMobileMenu()" class="block py-2 text-gray-700 font-medium cursor-pointer"><i class="fas fa-tasks mr-2 text-primary-500"></i>Задания</a>
+      <a onclick="navigate('resume');toggleMobileMenu()" class="block py-2 text-gray-700 font-medium cursor-pointer"><i class="fas fa-file-alt mr-2 text-primary-500"></i>Резюме</a>
+      <a onclick="navigate('interview');toggleMobileMenu()" class="block py-2 text-gray-700 font-medium cursor-pointer"><i class="fas fa-comments mr-2 text-primary-500"></i>Собеседование</a>
+      <a onclick="navigate('dashboard');toggleMobileMenu()" class="block py-2 text-gray-700 font-medium cursor-pointer"><i class="fas fa-user mr-2 text-primary-500"></i>Личный кабинет</a>
+    </div>
+  </div>
+</nav>
+
+<!-- ==================== HOME PAGE ==================== -->
+<div id="page-home" class="page active">
+  <!-- Hero Section -->
+  <section class="gradient-bg text-white py-20 md:py-32 relative overflow-hidden">
+    <div class="absolute inset-0 opacity-10">
+      <div class="absolute top-10 left-10 w-72 h-72 bg-white rounded-full filter blur-3xl"></div>
+      <div class="absolute bottom-10 right-10 w-96 h-96 bg-purple-300 rounded-full filter blur-3xl"></div>
+    </div>
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
+      <div class="grid md:grid-cols-2 gap-12 items-center">
+        <div class="animate-slide-up">
+          <div class="inline-flex items-center gap-2 bg-white/20 backdrop-blur rounded-full px-4 py-2 text-sm font-medium mb-6">
+            <span class="w-2 h-2 bg-green-400 rounded-full animate-pulse"></span>
+            1,200+ студентов уже нашли стажировку
+          </div>
+          <h1 class="text-4xl md:text-6xl font-black leading-tight mb-6">
+            Твой путь к<br>
+            <span class="text-yellow-300">первой стажировке</span>
+          </h1>
+          <p class="text-lg md:text-xl text-blue-100 mb-8 leading-relaxed">
+            Найди стажировку, потренируйся на реальных заданиях, улучши резюме и подготовься к собеседованию — всё в одном месте.
+          </p>
+          <div class="flex flex-wrap gap-4">
+            <button onclick="navigate('internships')" class="bg-white text-primary-700 px-6 py-3 rounded-xl font-semibold hover:bg-blue-50 transition-all transform hover:scale-105 shadow-lg">
+              <i class="fas fa-search mr-2"></i>Найти стажировку
+            </button>
+            <button onclick="navigate('tasks')" class="glass text-white px-6 py-3 rounded-xl font-semibold hover:bg-white/20 transition-all">
+              <i class="fas fa-code mr-2"></i>Тестовые задания
+            </button>
+          </div>
+          <div class="mt-8 flex gap-6 text-sm text-blue-200">
+            <div class="flex items-center gap-2"><i class="fas fa-check-circle text-green-400"></i> Бесплатно</div>
+            <div class="flex items-center gap-2"><i class="fas fa-check-circle text-green-400"></i> Без опыта</div>
+            <div class="flex items-center gap-2"><i class="fas fa-check-circle text-green-400"></i> Реальные задания</div>
+          </div>
+        </div>
+        <div class="hidden md:flex justify-center items-center">
+          <div class="relative">
+            <div class="w-80 h-80 gradient-bg rounded-3xl opacity-30 absolute inset-0 blur-2xl"></div>
+            <div class="relative glass rounded-3xl p-6 space-y-4 w-80">
+              <div class="flex items-center gap-3 bg-white/20 rounded-2xl p-3">
+                <div class="w-10 h-10 bg-green-400 rounded-xl flex items-center justify-center"><i class="fas fa-briefcase text-white"></i></div>
+                <div><div class="font-semibold text-sm">Яндекс</div><div class="text-xs text-blue-200">Frontend Intern</div></div>
+                <div class="ml-auto text-xs bg-green-400/30 text-green-200 px-2 py-1 rounded-lg">Новая</div>
+              </div>
+              <div class="flex items-center gap-3 bg-white/20 rounded-2xl p-3">
+                <div class="w-10 h-10 bg-purple-400 rounded-xl flex items-center justify-center"><i class="fas fa-chart-bar text-white"></i></div>
+                <div><div class="font-semibold text-sm">Сбербанк</div><div class="text-xs text-blue-200">Data Analyst Intern</div></div>
+                <div class="ml-auto text-xs bg-yellow-400/30 text-yellow-200 px-2 py-1 rounded-lg">Горячая</div>
+              </div>
+              <div class="flex items-center gap-3 bg-white/20 rounded-2xl p-3">
+                <div class="w-10 h-10 bg-blue-400 rounded-xl flex items-center justify-center"><i class="fas fa-palette text-white"></i></div>
+                <div><div class="font-semibold text-sm">Avito</div><div class="text-xs text-blue-200">UX/UI Designer</div></div>
+                <div class="ml-auto text-xs bg-blue-400/30 text-blue-200 px-2 py-1 rounded-lg">Открыта</div>
+              </div>
+              <div class="bg-white/10 rounded-2xl p-3">
+                <div class="text-xs text-blue-200 mb-2">Твоя готовность к стажировке</div>
+                <div class="h-2 bg-white/20 rounded-full overflow-hidden">
+                  <div class="h-full progress-bar rounded-full animate-pulse" style="width: 72%"></div>
+                </div>
+                <div class="text-right text-sm font-bold mt-1">72%</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Stats -->
+  <section class="bg-white py-8 border-b border-gray-100">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-8">
+        <div class="text-center">
+          <div class="text-3xl font-black text-primary-600">500+</div>
+          <div class="text-sm text-gray-500 mt-1">Стажировок</div>
+        </div>
+        <div class="text-center">
+          <div class="text-3xl font-black text-violet-600">10k+</div>
+          <div class="text-sm text-gray-500 mt-1">Студентов</div>
+        </div>
+        <div class="text-center">
+          <div class="text-3xl font-black text-primary-600">200+</div>
+          <div class="text-sm text-gray-500 mt-1">Компаний</div>
+        </div>
+        <div class="text-center">
+          <div class="text-3xl font-black text-violet-600">1.2k+</div>
+          <div class="text-sm text-gray-500 mt-1">Трудоустроились</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- How it works -->
+  <section class="py-20 bg-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center mb-16">
+        <div class="text-primary-600 font-semibold text-sm uppercase tracking-wider mb-3">Простой путь</div>
+        <h2 class="text-3xl md:text-4xl font-black text-gray-900 mb-4">Как работает UniWay</h2>
+        <p class="text-gray-500 text-lg max-w-2xl mx-auto">От регистрации до первого оффера — мы проведём тебя через каждый шаг</p>
+      </div>
+      <div class="grid md:grid-cols-4 gap-8">
+        <div class="text-center group">
+          <div class="w-16 h-16 bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg group-hover:scale-110 transition-transform">
+            <i class="fas fa-user-plus text-white text-xl"></i>
+          </div>
+          <div class="w-8 h-8 bg-primary-100 text-primary-600 rounded-full flex items-center justify-center mx-auto mb-3 text-sm font-bold">1</div>
+          <h3 class="font-bold text-gray-900 mb-2">Создай профиль</h3>
+          <p class="text-gray-500 text-sm">Заполни информацию о себе, навыках и желаемом направлении</p>
+        </div>
+        <div class="text-center group">
+          <div class="w-16 h-16 bg-gradient-to-br from-violet-500 to-violet-600 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg group-hover:scale-110 transition-transform">
+            <i class="fas fa-tasks text-white text-xl"></i>
+          </div>
+          <div class="w-8 h-8 bg-violet-100 text-violet-600 rounded-full flex items-center justify-center mx-auto mb-3 text-sm font-bold">2</div>
+          <h3 class="font-bold text-gray-900 mb-2">Прокачай навыки</h3>
+          <p class="text-gray-500 text-sm">Выполняй реальные задания и получай фидбэк от платформы</p>
+        </div>
+        <div class="text-center group">
+          <div class="w-16 h-16 bg-gradient-to-br from-pink-500 to-pink-600 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg group-hover:scale-110 transition-transform">
+            <i class="fas fa-file-alt text-white text-xl"></i>
+          </div>
+          <div class="w-8 h-8 bg-pink-100 text-pink-600 rounded-full flex items-center justify-center mx-auto mb-3 text-sm font-bold">3</div>
+          <h3 class="font-bold text-gray-900 mb-2">Создай резюме</h3>
+          <p class="text-gray-500 text-sm">Используй конструктор резюме с советами для студентов</p>
+        </div>
+        <div class="text-center group">
+          <div class="w-16 h-16 bg-gradient-to-br from-green-500 to-green-600 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg group-hover:scale-110 transition-transform">
+            <i class="fas fa-rocket text-white text-xl"></i>
+          </div>
+          <div class="w-8 h-8 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto mb-3 text-sm font-bold">4</div>
+          <h3 class="font-bold text-gray-900 mb-2">Откликайся!</h3>
+          <p class="text-gray-500 text-sm">Находи подходящие стажировки и отправляй отклики</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Features -->
+  <section class="py-20 bg-gray-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center mb-16">
+        <h2 class="text-3xl md:text-4xl font-black text-gray-900 mb-4">Всё что нужно для старта карьеры</h2>
+      </div>
+      <div class="grid md:grid-cols-3 gap-8">
+        <div class="bg-white rounded-2xl p-6 card-hover shadow-sm border border-gray-100 cursor-pointer" onclick="navigate('internships')">
+          <div class="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center mb-4">
+            <i class="fas fa-briefcase text-blue-600 text-xl"></i>
+          </div>
+          <h3 class="font-bold text-lg text-gray-900 mb-2">Каталог стажировок</h3>
+          <p class="text-gray-500 text-sm mb-4">500+ актуальных стажировок от ведущих компаний с умной фильтрацией</p>
+          <div class="text-primary-600 text-sm font-medium flex items-center gap-1">Смотреть стажировки <i class="fas fa-arrow-right"></i></div>
+        </div>
+        <div class="bg-white rounded-2xl p-6 card-hover shadow-sm border border-gray-100 cursor-pointer" onclick="navigate('tasks')">
+          <div class="w-12 h-12 bg-violet-100 rounded-xl flex items-center justify-center mb-4">
+            <i class="fas fa-code text-violet-600 text-xl"></i>
+          </div>
+          <h3 class="font-bold text-lg text-gray-900 mb-2">Тестовые задания</h3>
+          <p class="text-gray-500 text-sm mb-4">Тренируйся на реальных заданиях и собирай портфолио до начала отбора</p>
+          <div class="text-violet-600 text-sm font-medium flex items-center gap-1">Начать практику <i class="fas fa-arrow-right"></i></div>
+        </div>
+        <div class="bg-white rounded-2xl p-6 card-hover shadow-sm border border-gray-100 cursor-pointer" onclick="navigate('resume')">
+          <div class="w-12 h-12 bg-pink-100 rounded-xl flex items-center justify-center mb-4">
+            <i class="fas fa-file-alt text-pink-600 text-xl"></i>
+          </div>
+          <h3 class="font-bold text-lg text-gray-900 mb-2">Конструктор резюме</h3>
+          <p class="text-gray-500 text-sm mb-4">Создай профессиональное резюме даже без опыта работы</p>
+          <div class="text-pink-600 text-sm font-medium flex items-center gap-1">Создать резюме <i class="fas fa-arrow-right"></i></div>
+        </div>
+        <div class="bg-white rounded-2xl p-6 card-hover shadow-sm border border-gray-100 cursor-pointer" onclick="navigate('interview')">
+          <div class="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center mb-4">
+            <i class="fas fa-comments text-green-600 text-xl"></i>
+          </div>
+          <h3 class="font-bold text-lg text-gray-900 mb-2">Подготовка к интервью</h3>
+          <p class="text-gray-500 text-sm mb-4">Практикуй ответы на популярные вопросы и узнай как произвести впечатление</p>
+          <div class="text-green-600 text-sm font-medium flex items-center gap-1">Готовиться <i class="fas fa-arrow-right"></i></div>
+        </div>
+        <div class="bg-white rounded-2xl p-6 card-hover shadow-sm border border-gray-100 cursor-pointer" onclick="requireAuth(() => navigate('dashboard'))">
+          <div class="w-12 h-12 bg-yellow-100 rounded-xl flex items-center justify-center mb-4">
+            <i class="fas fa-trophy text-yellow-600 text-xl"></i>
+          </div>
+          <h3 class="font-bold text-lg text-gray-900 mb-2">Мини-портфолио</h3>
+          <p class="text-gray-500 text-sm mb-4">Показывай работодателям не только диплом, но и реальные выполненные задания</p>
+          <div class="text-yellow-600 text-sm font-medium flex items-center gap-1">Моё портфолио <i class="fas fa-arrow-right"></i></div>
+        </div>
+        <div class="bg-gradient-to-br from-primary-600 to-violet-600 rounded-2xl p-6 card-hover cursor-pointer" onclick="navigate('register')">
+          <div class="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center mb-4">
+            <i class="fas fa-star text-white text-xl"></i>
+          </div>
+          <h3 class="font-bold text-lg text-white mb-2">Начни прямо сейчас</h3>
+          <p class="text-blue-100 text-sm mb-4">Регистрация бесплатна. Начни карьеру без опыта уже сегодня</p>
+          <div class="text-white text-sm font-medium flex items-center gap-1">Зарегистрироваться <i class="fas fa-arrow-right"></i></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Popular Internships -->
+  <section class="py-20 bg-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between mb-12">
+        <div>
+          <h2 class="text-3xl font-black text-gray-900">Популярные стажировки</h2>
+          <p class="text-gray-500 mt-2">Актуальные предложения от ведущих компаний</p>
+        </div>
+        <button onclick="navigate('internships')" class="text-primary-600 font-medium hover:text-primary-700 flex items-center gap-1 hidden md:flex">
+          Все стажировки <i class="fas fa-arrow-right"></i>
+        </button>
+      </div>
+      <div id="home-internships" class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <!-- Loaded by JS -->
+        <div class="skeleton h-48 rounded-2xl"></div>
+        <div class="skeleton h-48 rounded-2xl"></div>
+        <div class="skeleton h-48 rounded-2xl"></div>
+      </div>
+      <div class="text-center mt-8 md:hidden">
+        <button onclick="navigate('internships')" class="bg-primary-600 text-white px-6 py-3 rounded-xl font-medium">Все стажировки</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Directions -->
+  <section class="py-20 bg-gray-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center mb-12">
+        <h2 class="text-3xl font-black text-gray-900 mb-4">Популярные направления</h2>
+      </div>
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div class="bg-white rounded-2xl p-5 card-hover cursor-pointer border border-gray-100 text-center group" onclick="navigate('internships', {field:'frontend'})">
+          <div class="w-12 h-12 bg-blue-100 rounded-2xl flex items-center justify-center mx-auto mb-3 group-hover:bg-blue-200 transition-colors"><i class="fas fa-laptop-code text-blue-600 text-xl"></i></div>
+          <div class="font-semibold text-gray-900">Frontend</div><div class="text-xs text-gray-500 mt-1">42 вакансии</div>
+        </div>
+        <div class="bg-white rounded-2xl p-5 card-hover cursor-pointer border border-gray-100 text-center group" onclick="navigate('internships', {field:'backend'})">
+          <div class="w-12 h-12 bg-green-100 rounded-2xl flex items-center justify-center mx-auto mb-3 group-hover:bg-green-200 transition-colors"><i class="fas fa-server text-green-600 text-xl"></i></div>
+          <div class="font-semibold text-gray-900">Backend</div><div class="text-xs text-gray-500 mt-1">38 вакансии</div>
+        </div>
+        <div class="bg-white rounded-2xl p-5 card-hover cursor-pointer border border-gray-100 text-center group" onclick="navigate('internships', {field:'data'})">
+          <div class="w-12 h-12 bg-purple-100 rounded-2xl flex items-center justify-center mx-auto mb-3 group-hover:bg-purple-200 transition-colors"><i class="fas fa-chart-bar text-purple-600 text-xl"></i></div>
+          <div class="font-semibold text-gray-900">Аналитика</div><div class="text-xs text-gray-500 mt-1">29 вакансий</div>
+        </div>
+        <div class="bg-white rounded-2xl p-5 card-hover cursor-pointer border border-gray-100 text-center group" onclick="navigate('internships', {field:'design'})">
+          <div class="w-12 h-12 bg-pink-100 rounded-2xl flex items-center justify-center mx-auto mb-3 group-hover:bg-pink-200 transition-colors"><i class="fas fa-palette text-pink-600 text-xl"></i></div>
+          <div class="font-semibold text-gray-900">Дизайн</div><div class="text-xs text-gray-500 mt-1">24 вакансии</div>
+        </div>
+        <div class="bg-white rounded-2xl p-5 card-hover cursor-pointer border border-gray-100 text-center group" onclick="navigate('internships', {field:'marketing'})">
+          <div class="w-12 h-12 bg-orange-100 rounded-2xl flex items-center justify-center mx-auto mb-3 group-hover:bg-orange-200 transition-colors"><i class="fas fa-bullhorn text-orange-600 text-xl"></i></div>
+          <div class="font-semibold text-gray-900">Маркетинг</div><div class="text-xs text-gray-500 mt-1">31 вакансия</div>
+        </div>
+        <div class="bg-white rounded-2xl p-5 card-hover cursor-pointer border border-gray-100 text-center group" onclick="navigate('internships', {field:'product'})">
+          <div class="w-12 h-12 bg-indigo-100 rounded-2xl flex items-center justify-center mx-auto mb-3 group-hover:bg-indigo-200 transition-colors"><i class="fas fa-box text-indigo-600 text-xl"></i></div>
+          <div class="font-semibold text-gray-900">Product</div><div class="text-xs text-gray-500 mt-1">18 вакансий</div>
+        </div>
+        <div class="bg-white rounded-2xl p-5 card-hover cursor-pointer border border-gray-100 text-center group" onclick="navigate('internships', {field:'hr'})">
+          <div class="w-12 h-12 bg-teal-100 rounded-2xl flex items-center justify-center mx-auto mb-3 group-hover:bg-teal-200 transition-colors"><i class="fas fa-users text-teal-600 text-xl"></i></div>
+          <div class="font-semibold text-gray-900">HR</div><div class="text-xs text-gray-500 mt-1">15 вакансий</div>
+        </div>
+        <div class="bg-white rounded-2xl p-5 card-hover cursor-pointer border border-gray-100 text-center group" onclick="navigate('internships', {field:'mobile'})">
+          <div class="w-12 h-12 bg-cyan-100 rounded-2xl flex items-center justify-center mx-auto mb-3 group-hover:bg-cyan-200 transition-colors"><i class="fas fa-mobile-alt text-cyan-600 text-xl"></i></div>
+          <div class="font-semibold text-gray-900">Mobile</div><div class="text-xs text-gray-500 mt-1">22 вакансии</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Testimonials -->
+  <section class="py-20 bg-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center mb-12">
+        <h2 class="text-3xl font-black text-gray-900 mb-4">Что говорят студенты</h2>
+      </div>
+      <div class="grid md:grid-cols-3 gap-8">
+        <div class="bg-gray-50 rounded-2xl p-6 border border-gray-100">
+          <div class="flex gap-1 mb-4 star-rating"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div>
+          <p class="text-gray-700 text-sm mb-4">"Благодаря UniWay я прошла отбор в Яндекс. Тестовые задания очень похожи на реальные, а советы по резюме реально помогли!"</p>
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 bg-gradient-to-br from-pink-400 to-violet-500 rounded-full flex items-center justify-center text-white font-bold text-sm">АК</div>
+            <div><div class="font-semibold text-sm">Анна Козлова</div><div class="text-xs text-gray-500">Frontend Intern, Яндекс</div></div>
+          </div>
+        </div>
+        <div class="bg-gray-50 rounded-2xl p-6 border border-gray-100">
+          <div class="flex gap-1 mb-4 star-rating"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div>
+          <p class="text-gray-700 text-sm mb-4">"Я 2 года не мог попасть на стажировку. После 3 месяцев на UniWay — получил оффер от Ozon. Платформа реально работает!"</p>
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 bg-gradient-to-br from-blue-400 to-indigo-500 rounded-full flex items-center justify-center text-white font-bold text-sm">МИ</div>
+            <div><div class="font-semibold text-sm">Михаил Иванов</div><div class="text-xs text-gray-500">Data Analyst, Ozon</div></div>
+          </div>
+        </div>
+        <div class="bg-gray-50 rounded-2xl p-6 border border-gray-100">
+          <div class="flex gap-1 mb-4 star-rating"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star-half-alt"></i></div>
+          <p class="text-gray-700 text-sm mb-4">"Раздел подготовки к собеседованию — золото! Разобралась как отвечать без опыта. Прошла интервью в VK с первого раза!"</p>
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 bg-gradient-to-br from-green-400 to-teal-500 rounded-full flex items-center justify-center text-white font-bold text-sm">ДС</div>
+            <div><div class="font-semibold text-sm">Дарья Соколова</div><div class="text-xs text-gray-500">UX Designer, VK</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="py-20 gradient-bg text-white">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+      <h2 class="text-3xl md:text-5xl font-black mb-6">Начни карьеру без опыта</h2>
+      <p class="text-xl text-blue-100 mb-8">Зарегистрируйся бесплатно и получи доступ к стажировкам, заданиям и советам</p>
+      <div class="flex flex-col sm:flex-row gap-4 justify-center">
+        <button onclick="navigate('register')" class="bg-white text-primary-700 px-8 py-4 rounded-xl font-bold text-lg hover:bg-blue-50 transition-all transform hover:scale-105 shadow-xl">
+          Начать бесплатно <i class="fas fa-arrow-right ml-2"></i>
+        </button>
+        <button onclick="navigate('internships')" class="glass text-white px-8 py-4 rounded-xl font-bold text-lg hover:bg-white/20 transition-all">
+          Смотреть стажировки
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="bg-gray-900 text-white py-12">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="grid md:grid-cols-4 gap-8 mb-8">
+        <div>
+          <div class="flex items-center gap-2 mb-4">
+            <div class="w-8 h-8 gradient-bg rounded-lg flex items-center justify-center"><i class="fas fa-graduation-cap text-white text-sm"></i></div>
+            <span class="text-xl font-bold">UniWay</span>
+          </div>
+          <p class="text-gray-400 text-sm">Платформа для студентов, которые хотят найти первую стажировку и построить карьеру.</p>
+        </div>
+        <div>
+          <h4 class="font-semibold mb-4">Студентам</h4>
+          <ul class="space-y-2 text-sm text-gray-400">
+            <li><a onclick="navigate('internships')" class="hover:text-white cursor-pointer transition-colors">Стажировки</a></li>
+            <li><a onclick="navigate('tasks')" class="hover:text-white cursor-pointer transition-colors">Тестовые задания</a></li>
+            <li><a onclick="navigate('resume')" class="hover:text-white cursor-pointer transition-colors">Конструктор резюме</a></li>
+            <li><a onclick="navigate('interview')" class="hover:text-white cursor-pointer transition-colors">Подготовка к интервью</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4 class="font-semibold mb-4">Работодателям</h4>
+          <ul class="space-y-2 text-sm text-gray-400">
+            <li><a onclick="navigate('register-employer')" class="hover:text-white cursor-pointer transition-colors">Разместить вакансию</a></li>
+            <li><a onclick="navigate('register-employer')" class="hover:text-white cursor-pointer transition-colors">Найти стажёра</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4 class="font-semibold mb-4">Поддержка</h4>
+          <ul class="space-y-2 text-sm text-gray-400">
+            <li><a href="/cdn-cgi/l/email-protection#0f676a6363604f7a6166786e76217d7a" class="hover:text-white transition-colors"><span class="__cf_email__" data-cfemail="e189848d8d8ea1948f88968098cf9394">[email&#160;protected]</span></a></li>
+            <li><span class="text-gray-500">Telegram: @uniway</span></li>
+          </ul>
+        </div>
+      </div>
+      <div class="border-t border-gray-800 pt-8 flex flex-col md:flex-row items-center justify-between gap-4">
+        <div class="text-gray-400 text-sm">© 2024 UniWay. Все права защищены.</div>
+        <div class="text-gray-400 text-sm">Сделано с ❤️ для студентов Казахстана</div>
+      </div>
+    </div>
+  </footer>
+</div>
+
+<!-- ==================== INTERNSHIPS PAGE ==================== -->
+<div id="page-internships" class="page">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div class="mb-8">
+      <h1 class="text-3xl font-black text-gray-900">Стажировки и вакансии</h1>
+      <p class="text-gray-500 mt-2">Найди подходящую стажировку и начни карьеру</p>
+    </div>
+
+    <!-- Filters -->
+    <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 mb-8">
+      <div class="flex flex-col md:flex-row gap-4 mb-4">
+        <div class="flex-1 relative">
+          <i class="fas fa-search absolute left-3 top-3 text-gray-400"></i>
+          <input id="search-input" type="text" placeholder="Поиск по названию, компании, навыкам..." class="w-full pl-10 pr-4 py-2.5 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-300 text-sm" oninput="loadInternships()">
+        </div>
+        <button onclick="toggleFilters()" class="flex items-center gap-2 bg-gray-100 text-gray-700 px-4 py-2.5 rounded-xl font-medium text-sm hover:bg-gray-200 transition-colors">
+          <i class="fas fa-filter"></i> Фильтры
+        </button>
+      </div>
+      <div id="filters-panel" class="hidden">
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 pt-4 border-t border-gray-100">
+          <div>
+            <label class="block text-xs font-medium text-gray-500 mb-1">Направление</label>
+            <select id="filter-field" class="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-300" onchange="loadInternships()">
+              <option value="">Все направления</option>
+              <option value="frontend">Frontend</option>
+              <option value="backend">Backend</option>
+              <option value="data">Аналитика данных</option>
+              <option value="design">Дизайн</option>
+              <option value="marketing">Маркетинг</option>
+              <option value="product">Product</option>
+              <option value="hr">HR</option>
+              <option value="mobile">Mobile</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-gray-500 mb-1">Уровень</label>
+            <select id="filter-level" class="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-300" onchange="loadInternships()">
+              <option value="">Все уровни</option>
+              <option value="beginner">Beginner</option>
+              <option value="intern">Intern</option>
+              <option value="junior">Junior</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-gray-500 mb-1">Формат</label>
+            <select id="filter-format" class="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-300" onchange="loadInternships()">
+              <option value="">Любой формат</option>
+              <option value="offline">Офис</option>
+              <option value="online">Удалённо</option>
+              <option value="hybrid">Гибрид</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-gray-500 mb-1">Оплата</label>
+            <select id="filter-paid" class="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-300" onchange="loadInternships()">
+              <option value="">Любая</option>
+              <option value="true">Оплачиваемая</option>
+              <option value="false">Неоплачиваемая</option>
+            </select>
+          </div>
+        </div>
+        <div class="mt-4">
+          <button onclick="resetFilters()" class="text-sm text-gray-500 hover:text-gray-700"><i class="fas fa-times mr-1"></i>Сбросить фильтры</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tags -->
+    <div class="flex flex-wrap gap-2 mb-6" id="active-filters"></div>
+
+    <!-- Results count -->
+    <div class="flex items-center justify-between mb-4">
+      <div class="text-sm text-gray-500">Найдено: <span id="internships-count" class="font-semibold text-gray-900">...</span> стажировок в Казахстане</div>
+    </div>
+
+    <!-- Internships Grid -->
+    <div id="internships-grid" class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div class="skeleton h-64 rounded-2xl"></div>
+      <div class="skeleton h-64 rounded-2xl"></div>
+      <div class="skeleton h-64 rounded-2xl"></div>
+      <div class="skeleton h-64 rounded-2xl"></div>
+      <div class="skeleton h-64 rounded-2xl"></div>
+      <div class="skeleton h-64 rounded-2xl"></div>
+    </div>
+
+    <!-- Load More -->
+    <div class="text-center mt-8">
+      <button id="load-more-btn" onclick="loadMoreInternships()" class="hidden bg-white border border-gray-200 text-gray-700 px-8 py-3 rounded-xl font-medium hover:bg-gray-50 transition-colors">
+        Загрузить ещё
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== TASKS PAGE ==================== -->
+<div id="page-tasks" class="page">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div class="mb-8">
+      <h1 class="text-3xl font-black text-gray-900">Тестовые задания</h1>
+      <p class="text-gray-500 mt-2">Тренируйся на реальных заданиях и собирай портфолио</p>
+    </div>
+
+    <!-- Task Categories -->
+    <div class="flex flex-wrap gap-3 mb-8" id="task-categories">
+      <button class="task-cat-btn active px-4 py-2 rounded-xl text-sm font-medium bg-primary-600 text-white" data-cat="" onclick="filterTasksByCategory('')">Все задания</button>
+      <button class="task-cat-btn px-4 py-2 rounded-xl text-sm font-medium bg-white border border-gray-200 text-gray-600 hover:bg-gray-50" data-cat="frontend" onclick="filterTasksByCategory('frontend')"><i class="fas fa-laptop-code mr-1"></i>Frontend</button>
+      <button class="task-cat-btn px-4 py-2 rounded-xl text-sm font-medium bg-white border border-gray-200 text-gray-600 hover:bg-gray-50" data-cat="backend" onclick="filterTasksByCategory('backend')"><i class="fas fa-server mr-1"></i>Backend</button>
+      <button class="task-cat-btn px-4 py-2 rounded-xl text-sm font-medium bg-white border border-gray-200 text-gray-600 hover:bg-gray-50" data-cat="design" onclick="filterTasksByCategory('design')"><i class="fas fa-palette mr-1"></i>Дизайн</button>
+      <button class="task-cat-btn px-4 py-2 rounded-xl text-sm font-medium bg-white border border-gray-200 text-gray-600 hover:bg-gray-50" data-cat="marketing" onclick="filterTasksByCategory('marketing')"><i class="fas fa-bullhorn mr-1"></i>Маркетинг</button>
+      <button class="task-cat-btn px-4 py-2 rounded-xl text-sm font-medium bg-white border border-gray-200 text-gray-600 hover:bg-gray-50" data-cat="product" onclick="filterTasksByCategory('product')"><i class="fas fa-box mr-1"></i>Product</button>
+      <button class="task-cat-btn px-4 py-2 rounded-xl text-sm font-medium bg-white border border-gray-200 text-gray-600 hover:bg-gray-50" data-cat="data" onclick="filterTasksByCategory('data')"><i class="fas fa-chart-bar mr-1"></i>Data</button>
+    </div>
+
+    <div id="tasks-grid" class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div class="skeleton h-56 rounded-2xl"></div>
+      <div class="skeleton h-56 rounded-2xl"></div>
+      <div class="skeleton h-56 rounded-2xl"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== RESUME PAGE ==================== -->
+<div id="page-resume" class="page">
+  <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div class="mb-8">
+      <h1 class="text-3xl font-black text-gray-900">Конструктор резюме</h1>
+      <p class="text-gray-500 mt-2">Создай профессиональное резюме даже без опыта работы</p>
+    </div>
+
+    <div class="grid lg:grid-cols-2 gap-8">
+      <!-- Form -->
+      <div class="space-y-6">
+        <!-- Tips Banner -->
+        <div class="bg-blue-50 border border-blue-200 rounded-2xl p-4">
+          <h3 class="font-semibold text-blue-900 flex items-center gap-2 mb-2"><i class="fas fa-lightbulb text-yellow-500"></i>Советы для студентов</h3>
+          <ul class="text-sm text-blue-700 space-y-1">
+            <li>• Вместо опыта работы добавь учебные проекты</li>
+            <li>• Опиши coursework и стажировки в университете</li>
+            <li>• Укажи soft skills: командная работа, инициативность</li>
+            <li>• Будь конкретен: результаты в цифрах работают лучше</li>
+          </ul>
+        </div>
+
+        <!-- Summary -->
+        <div class="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm">
+          <h3 class="font-bold text-gray-900 mb-4 flex items-center gap-2"><i class="fas fa-user text-primary-500"></i>О себе</h3>
+          <textarea id="res-summary" rows="3" placeholder="Студент 3 курса МГУ, изучаю Data Science. Ищу стажировку, чтобы применить знания Python и SQL на практике. Участвовал в хакатоне, реализовал учебный проект по анализу данных." class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary-300 resize-none"></textarea>
+        </div>
+
+        <!-- Education -->
+        <div class="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm">
+          <h3 class="font-bold text-gray-900 mb-4 flex items-center gap-2"><i class="fas fa-graduation-cap text-primary-500"></i>Образование</h3>
+          <div id="education-items" class="space-y-4">
+            <div class="education-item border border-gray-100 rounded-xl p-4">
+              <div class="grid grid-cols-2 gap-3">
+                <input type="text" placeholder="Университет" class="edu-institution col-span-2 border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-300">
+                <input type="text" placeholder="Специальность" class="edu-field border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-300">
+                <input type="text" placeholder="Степень (Бакалавр...)" class="edu-degree border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-300">
+                <input type="text" placeholder="Год начала (2021)" class="edu-year_start border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-300">
+                <input type="text" placeholder="Год окончания (2025)" class="edu-year_end border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-300">
+              </div>
+            </div>
+          </div>
+          <button onclick="addEducation()" class="mt-3 text-sm text-primary-600 hover:text-primary-700 font-medium"><i class="fas fa-plus mr-1"></i>Добавить образование</button>
+        </div>
+
+        <!-- Projects -->
+        <div class="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm">
+          <h3 class="font-bold text-gray-900 mb-4 flex items-center gap-2"><i class="fas fa-folder-open text-primary-500"></i>Проекты</h3>
+          <div id="projects-items" class="space-y-4">
+            <div class="project-item border border-gray-100 rounded-xl p-4">
+              <input type="text" placeholder="Название проекта" class="proj-name w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-300 mb-2">
+              <textarea rows="2" placeholder="Описание: что сделал, какие технологии использовал, каков результат" class="proj-description w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-300 resize-none mb-2"></textarea>
+              <input type="text" placeholder="Стек: Python, SQL, Tableau" class="proj-tech w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-300">
+            </div>
+          </div>
+          <button onclick="addProject()" class="mt-3 text-sm text-primary-600 hover:text-primary-700 font-medium"><i class="fas fa-plus mr-1"></i>Добавить проект</button>
+        </div>
+
+        <!-- Skills -->
+        <div class="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm">
+          <h3 class="font-bold text-gray-900 mb-4 flex items-center gap-2"><i class="fas fa-code text-primary-500"></i>Навыки</h3>
+          <div id="resume-skills-container" class="flex flex-wrap gap-2 mb-3"></div>
+          <div class="flex gap-2">
+            <input type="text" id="new-skill-input" placeholder="Добавить навык..." class="flex-1 border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-300" onkeypress="if(event.key==='Enter'){addResumeSkill()}">
+            <button onclick="addResumeSkill()" class="bg-primary-600 text-white px-4 py-2 rounded-xl text-sm font-medium hover:bg-primary-700">Добавить</button>
+          </div>
+          <div class="mt-3 flex flex-wrap gap-2">
+            <span class="text-xs text-gray-400">Популярные:</span>
+            <span onclick="addSkillQuick('Python')" class="cursor-pointer tag bg-blue-50 text-blue-700 hover:bg-blue-100">Python</span>
+            <span onclick="addSkillQuick('Excel')" class="cursor-pointer tag bg-green-50 text-green-700 hover:bg-green-100">Excel</span>
+            <span onclick="addSkillQuick('SQL')" class="cursor-pointer tag bg-purple-50 text-purple-700 hover:bg-purple-100">SQL</span>
+            <span onclick="addSkillQuick('Figma')" class="cursor-pointer tag bg-pink-50 text-pink-700 hover:bg-pink-100">Figma</span>
+            <span onclick="addSkillQuick('JavaScript')" class="cursor-pointer tag bg-yellow-50 text-yellow-700 hover:bg-yellow-100">JavaScript</span>
+          </div>
+        </div>
+
+        <!-- Languages -->
+        <div class="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm">
+          <h3 class="font-bold text-gray-900 mb-4 flex items-center gap-2"><i class="fas fa-language text-primary-500"></i>Языки</h3>
+          <div id="resume-languages-container" class="flex flex-wrap gap-2 mb-3"></div>
+          <div class="flex gap-2">
+            <input type="text" id="new-lang-input" placeholder="Язык и уровень (Английский B2)" class="flex-1 border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-300" onkeypress="if(event.key==='Enter'){addResumeLanguage()}">
+            <button onclick="addResumeLanguage()" class="bg-primary-600 text-white px-4 py-2 rounded-xl text-sm font-medium hover:bg-primary-700">Добавить</button>
+          </div>
+        </div>
+
+        <!-- Certificates -->
+        <div class="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm">
+          <h3 class="font-bold text-gray-900 mb-4 flex items-center gap-2"><i class="fas fa-certificate text-primary-500"></i>Сертификаты и курсы</h3>
+          <div id="certificates-items" class="space-y-3">
+            <div class="cert-item flex gap-2">
+              <input type="text" placeholder="Название курса / сертификата" class="cert-name flex-1 border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-300">
+              <input type="text" placeholder="Год" class="cert-year w-20 border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-300">
+            </div>
+          </div>
+          <button onclick="addCertificate()" class="mt-3 text-sm text-primary-600 hover:text-primary-700 font-medium"><i class="fas fa-plus mr-1"></i>Добавить</button>
+        </div>
+
+        <!-- Achievements -->
+        <div class="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm">
+          <h3 class="font-bold text-gray-900 mb-4 flex items-center gap-2"><i class="fas fa-trophy text-primary-500"></i>Достижения</h3>
+          <textarea id="res-achievements" rows="3" placeholder="Победитель хакатона Яндекса 2023, стипендиат программы Excellence..." class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary-300 resize-none"></textarea>
+        </div>
+
+        <div class="flex gap-3">
+          <button onclick="saveResume()" class="flex-1 bg-primary-600 text-white py-3 rounded-xl font-semibold hover:bg-primary-700 transition-colors">
+            <i class="fas fa-save mr-2"></i>Сохранить резюме
+          </button>
+          <button onclick="printResume()" class="bg-white border border-gray-200 text-gray-700 px-6 py-3 rounded-xl font-medium hover:bg-gray-50 transition-colors">
+            <i class="fas fa-download mr-2"></i>PDF
+          </button>
+        </div>
+      </div>
+
+      <!-- Preview -->
+      <div class="lg:sticky lg:top-20 h-fit">
+        <div class="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden" id="resume-preview">
+          <div class="gradient-bg p-6 text-white">
+            <div class="text-2xl font-black" id="prev-name">Твоё имя</div>
+            <div class="text-blue-200 text-sm mt-1" id="prev-contact">Контакты будут здесь</div>
+            <div class="mt-3 text-sm text-blue-100" id="prev-summary">Краткое описание о тебе появится здесь...</div>
+          </div>
+          <div class="p-6 space-y-5 text-sm">
+            <div>
+              <div class="font-bold text-gray-900 text-xs uppercase tracking-wider mb-2 flex items-center gap-2"><i class="fas fa-graduation-cap text-primary-500"></i>Образование</div>
+              <div id="prev-education" class="text-gray-600">Заполни раздел образование</div>
+            </div>
+            <div>
+              <div class="font-bold text-gray-900 text-xs uppercase tracking-wider mb-2 flex items-center gap-2"><i class="fas fa-folder-open text-primary-500"></i>Проекты</div>
+              <div id="prev-projects" class="text-gray-600">Добавь свои проекты</div>
+            </div>
+            <div>
+              <div class="font-bold text-gray-900 text-xs uppercase tracking-wider mb-2 flex items-center gap-2"><i class="fas fa-code text-primary-500"></i>Навыки</div>
+              <div id="prev-skills" class="flex flex-wrap gap-1">
+                <span class="tag bg-blue-50 text-blue-700">Python</span>
+                <span class="tag bg-purple-50 text-purple-700">SQL</span>
+              </div>
+            </div>
+            <div>
+              <div class="font-bold text-gray-900 text-xs uppercase tracking-wider mb-2 flex items-center gap-2"><i class="fas fa-trophy text-primary-500"></i>Достижения</div>
+              <div id="prev-achievements" class="text-gray-600">Добавь свои достижения</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== INTERVIEW PAGE ==================== -->
+<div id="page-interview" class="page">
+  <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div class="mb-8">
+      <h1 class="text-3xl font-black text-gray-900">Подготовка к собеседованию</h1>
+      <p class="text-gray-500 mt-2">Тренируй ответы и готовься к первому интервью</p>
+    </div>
+
+    <!-- Categories -->
+    <div class="flex flex-wrap gap-3 mb-8" id="interview-categories">
+      <button class="int-cat-btn active px-4 py-2 rounded-xl text-sm font-medium bg-primary-600 text-white" onclick="filterInterview('hr')">HR вопросы</button>
+      <button class="int-cat-btn px-4 py-2 rounded-xl text-sm font-medium bg-white border border-gray-200 text-gray-600" onclick="filterInterview('product')">Product</button>
+      <button class="int-cat-btn px-4 py-2 rounded-xl text-sm font-medium bg-white border border-gray-200 text-gray-600" onclick="filterInterview('frontend')">Frontend</button>
+      <button class="int-cat-btn px-4 py-2 rounded-xl text-sm font-medium bg-white border border-gray-200 text-gray-600" onclick="filterInterview('backend')">Backend</button>
+      <button class="int-cat-btn px-4 py-2 rounded-xl text-sm font-medium bg-white border border-gray-200 text-gray-600" onclick="filterInterview('design')">Дизайн</button>
+      <button class="int-cat-btn px-4 py-2 rounded-xl text-sm font-medium bg-white border border-gray-200 text-gray-600" onclick="filterInterview('data')">Аналитика</button>
+    </div>
+
+    <!-- Tips -->
+    <div class="grid md:grid-cols-3 gap-4 mb-8">
+      <div class="bg-blue-50 rounded-2xl p-4">
+        <div class="font-semibold text-blue-900 mb-2"><i class="fas fa-user mr-2 text-blue-500"></i>Расскажи о себе</div>
+        <p class="text-sm text-blue-700">Подготовь 1-2 минутный питч: кто ты, что изучаешь, почему интересна эта роль</p>
+      </div>
+      <div class="bg-green-50 rounded-2xl p-4">
+        <div class="font-semibold text-green-900 mb-2"><i class="fas fa-exclamation-circle mr-2 text-green-500"></i>Без опыта?</div>
+        <p class="text-sm text-green-700">Говори о проектах, курсах и учёбе. Энтузиазм и желание учиться — тоже ценность</p>
+      </div>
+      <div class="bg-purple-50 rounded-2xl p-4">
+        <div class="font-semibold text-purple-900 mb-2"><i class="fas fa-shield-alt mr-2 text-purple-500"></i>Слабые стороны</div>
+        <p class="text-sm text-purple-700">Называй реальную слабость и добавляй, как работаешь над её улучшением</p>
+      </div>
+    </div>
+
+    <!-- Questions -->
+    <div id="interview-questions" class="space-y-4"></div>
+  </div>
+</div>
+
+<!-- ==================== AUTH PAGES ==================== -->
+<div id="page-login" class="page">
+  <div class="min-h-screen bg-gray-50 flex items-center justify-center px-4 py-12">
+    <div class="w-full max-w-md">
+      <div class="text-center mb-8">
+        <div class="w-16 h-16 gradient-bg rounded-2xl flex items-center justify-center mx-auto mb-4">
+          <i class="fas fa-graduation-cap text-white text-2xl"></i>
+        </div>
+        <h1 class="text-2xl font-black text-gray-900">Вход в UniWay</h1>
+        <p class="text-gray-500 mt-2">Войди в свой аккаунт</p>
+      </div>
+      <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
+        <form id="login-form" onsubmit="handleLogin(event)">
+          <div class="space-y-4">
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">Email</label>
+              <input type="email" id="login-email" required placeholder="you@example.com" class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary-300">
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">Пароль</label>
+              <div class="relative">
+                <input type="password" id="login-password" required placeholder="••••••••" class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary-300 pr-10">
+                <button type="button" onclick="togglePassword('login-password')" class="absolute right-3 top-3 text-gray-400 hover:text-gray-600"><i class="fas fa-eye"></i></button>
+              </div>
+            </div>
+          </div>
+          <div id="login-error" class="hidden mt-3 bg-red-50 border border-red-200 rounded-xl p-3 text-sm text-red-700"></div>
+          <button type="submit" id="login-btn" class="w-full mt-6 bg-primary-600 text-white py-3 rounded-xl font-semibold hover:bg-primary-700 transition-colors flex items-center justify-center gap-2">
+            <span>Войти</span>
+          </button>
+        </form>
+        <div class="mt-6 pt-6 border-t border-gray-100 text-center">
+          <p class="text-sm text-gray-500">Нет аккаунта? <a onclick="navigate('register')" class="text-primary-600 font-medium cursor-pointer hover:text-primary-700">Зарегистрироваться</a></p>
+        </div>
+        <div class="mt-4 bg-gray-50 rounded-xl p-3 text-xs text-gray-500">
+          <div class="font-medium mb-1">Тестовые аккаунты:</div>
+          <div>Студент: <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="40212c25380033343524252e346e3235">[email&#160;protected]</a> / student123</div>
+          <div>Работодатель: <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="cea6bc8eb7afa0aaabb6e0bcbb">[email&#160;protected]</a> / employer123</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="page-register" class="page">
+  <div class="min-h-screen bg-gray-50 flex items-center justify-center px-4 py-12">
+    <div class="w-full max-w-lg">
+      <div class="text-center mb-8">
+        <div class="w-16 h-16 gradient-bg rounded-2xl flex items-center justify-center mx-auto mb-4">
+          <i class="fas fa-graduation-cap text-white text-2xl"></i>
+        </div>
+        <h1 class="text-2xl font-black text-gray-900">Регистрация в UniWay</h1>
+        <p class="text-gray-500 mt-2">Начни карьеру без опыта</p>
+      </div>
+      <!-- Role selector -->
+      <div class="flex gap-4 mb-6">
+        <button onclick="setRegisterRole('student')" id="role-student" class="flex-1 py-3 rounded-xl border-2 border-primary-500 bg-primary-50 text-primary-700 font-semibold text-sm flex items-center justify-center gap-2">
+          <i class="fas fa-user-graduate"></i> Студент
+        </button>
+        <button onclick="setRegisterRole('employer')" id="role-employer" class="flex-1 py-3 rounded-xl border-2 border-gray-200 bg-white text-gray-600 font-semibold text-sm flex items-center justify-center gap-2">
+          <i class="fas fa-building"></i> Работодатель
+        </button>
+      </div>
+
+      <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
+        <!-- Student Form -->
+        <form id="register-student-form" onsubmit="handleRegister(event, 'student')">
+          <div class="space-y-4">
+            <div class="grid grid-cols-2 gap-4">
+              <div class="col-span-2">
+                <label class="block text-sm font-medium text-gray-700 mb-1">Имя и фамилия *</label>
+                <input type="text" id="reg-name" required placeholder="Алексей Иванов" class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary-300">
+              </div>
+              <div class="col-span-2">
+                <label class="block text-sm font-medium text-gray-700 mb-1">Email *</label>
+                <input type="email" id="reg-email" required placeholder="you@example.com" class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary-300">
+              </div>
+              <div class="col-span-2">
+                <label class="block text-sm font-medium text-gray-700 mb-1">Пароль *</label>
+                <input type="password" id="reg-password" required placeholder="Минимум 6 символов" class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary-300">
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Университет</label>
+                <input type="text" id="reg-university" list="kz-universities" placeholder="КБТУ, НУ, ЕНУ..." class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary-300">
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Курс</label>
+                <select id="reg-year" class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary-300">
+                  <option value="1">1 курс</option><option value="2">2 курс</option><option value="3">3 курс</option><option value="4">4 курс</option><option value="5">5 курс</option><option value="6">Аспирант</option>
+                </select>
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Специальность</label>
+                <input type="text" id="reg-major" placeholder="Информатика, Маркетинг..." class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary-300">
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Город</label>
+                <input type="text" id="reg-city" list="kz-cities" placeholder="Алматы, Астана..." class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary-300">
+              </div>
+              <!-- KZ Cities datalist -->
+              <datalist id="kz-cities">
+                <option value="Алматы"><option value="Астана"><option value="Шымкент">
+                <option value="Қарағанды"><option value="Актобе"><option value="Тараз">
+                <option value="Павлодар"><option value="Семей"><option value="Атырау">
+                <option value="Өскемен"><option value="Көкшетау"><option value="Орал">
+                <option value="Петропавл"><option value="Қостанай"><option value="Кызылорда">
+              </datalist>
+              <!-- KZ Universities datalist -->
+              <datalist id="kz-universities">
+                <option value="Казахстанско-Британский Технический Университет (КБТУ)">
+                <option value="Назарбаев Университет (НУ)">
+                <option value="Евразийский Национальный Университет (ЕНУ)">
+                <option value="Казахский Национальный Университет (КазНУ)">
+                <option value="Международный Казахско-Турецкий Университет">
+                <option value="Алматы Менеджмент Университет (AlmaU)">
+                <option value="Satbayev University">
+                <option value="Казахский национальный технический университет (КазНТУ)">
+                <option value="SDU University">
+                <option value="Университет НАРХОЗ">
+              </datalist>
+              <div class="col-span-2">
+                <label class="block text-sm font-medium text-gray-700 mb-1">Желаемое направление</label>
+                <select id="reg-field" class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary-300">
+                  <option value="">Выберите направление</option>
+                  <option value="frontend">Frontend разработка</option><option value="backend">Backend разработка</option>
+                  <option value="data">Аналитика данных</option><option value="design">Дизайн</option>
+                  <option value="marketing">Маркетинг</option><option value="product">Product Management</option>
+                  <option value="hr">HR</option><option value="mobile">Mobile разработка</option>
+                </select>
+              </div>
+            </div>
+          </div>
+          <div id="reg-error" class="hidden mt-3 bg-red-50 border border-red-200 rounded-xl p-3 text-sm text-red-700"></div>
+          <button type="submit" class="w-full mt-6 bg-primary-600 text-white py-3 rounded-xl font-semibold hover:bg-primary-700 transition-colors">
+            Зарегистрироваться
+          </button>
+        </form>
+
+        <!-- Employer Form -->
+        <form id="register-employer-form" class="hidden" onsubmit="handleRegister(event, 'employer')">
+          <div class="space-y-4">
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">Название компании *</label>
+              <input type="text" id="emp-company" required placeholder="ТОО «МояКомпания» / АО Компания" class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary-300">
+            </div>
+            <div class="grid grid-cols-2 gap-4">
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Email *</label>
+                <input type="email" id="emp-email" required placeholder="hr@company.kz" class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary-300">
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Пароль *</label>
+                <input type="password" id="emp-password" required placeholder="••••••••" class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary-300">
+              </div>
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">Индустрия</label>
+              <input type="text" id="emp-industry" placeholder="IT & FinTech, Банки, Маркетинг..." class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary-300">
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">Контактное лицо</label>
+              <input type="text" id="emp-contact" placeholder="Нурланова Айгерим, HR Manager" class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary-300">
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">Описание компании</label>
+              <textarea id="emp-description" rows="3" placeholder="Расскажите о вашей компании, культуре и возможностях для стажёров..." class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary-300 resize-none"></textarea>
+            </div>
+          </div>
+          <div id="emp-reg-error" class="hidden mt-3 bg-red-50 border border-red-200 rounded-xl p-3 text-sm text-red-700"></div>
+          <button type="submit" class="w-full mt-6 bg-primary-600 text-white py-3 rounded-xl font-semibold hover:bg-primary-700 transition-colors">
+            Зарегистрировать компанию
+          </button>
+        </form>
+
+        <div class="mt-4 pt-4 border-t border-gray-100 text-center">
+          <p class="text-sm text-gray-500">Уже есть аккаунт? <a onclick="navigate('login')" class="text-primary-600 font-medium cursor-pointer hover:text-primary-700">Войти</a></p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== DASHBOARD (STUDENT) ==================== -->
+<div id="page-dashboard" class="page">
+  <div class="flex min-h-screen">
+    <!-- Sidebar -->
+    <div class="sidebar w-64 bg-white border-r border-gray-100 flex-shrink-0 flex flex-col">
+      <div class="p-6 border-b border-gray-100">
+        <div class="flex items-center gap-3">
+          <div class="w-12 h-12 bg-gradient-to-br from-primary-500 to-violet-500 rounded-2xl flex items-center justify-center text-white font-bold text-lg" id="dash-avatar">А</div>
+          <div>
+            <div class="font-bold text-gray-900 text-sm" id="dash-name">Студент</div>
+            <div class="text-xs text-gray-500" id="dash-role-label">Студент</div>
+          </div>
+        </div>
+        <!-- Readiness Score -->
+        <div class="mt-4 bg-gradient-to-r from-blue-50 to-violet-50 rounded-xl p-3">
+          <div class="flex items-center justify-between text-xs mb-1">
+            <span class="text-gray-600 font-medium">Готовность к стажировке</span>
+            <span class="font-bold text-primary-600" id="dash-score">0%</span>
+          </div>
+          <div class="h-2 bg-gray-200 rounded-full overflow-hidden">
+            <div class="h-full progress-bar rounded-full transition-all duration-1000" id="dash-score-bar" style="width: 0%"></div>
+          </div>
+        </div>
+      </div>
+      <nav class="flex-1 p-4 space-y-1">
+        <a onclick="showDashTab('overview')" class="sidebar-item flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium cursor-pointer text-gray-600 hover:bg-gray-50 transition-colors sidebar-active" data-tab="overview">
+          <i class="fas fa-th-large w-4"></i> Обзор
+        </a>
+        <a onclick="showDashTab('profile')" class="sidebar-item flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium cursor-pointer text-gray-600 hover:bg-gray-50 transition-colors" data-tab="profile">
+          <i class="fas fa-user w-4"></i> Профиль
+        </a>
+        <a onclick="showDashTab('applications')" class="sidebar-item flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium cursor-pointer text-gray-600 hover:bg-gray-50 transition-colors" data-tab="applications">
+          <i class="fas fa-paper-plane w-4"></i> Мои отклики
+        </a>
+        <a onclick="showDashTab('saved')" class="sidebar-item flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium cursor-pointer text-gray-600 hover:bg-gray-50 transition-colors" data-tab="saved">
+          <i class="fas fa-bookmark w-4"></i> Сохранённые
+        </a>
+        <a onclick="showDashTab('portfolio')" class="sidebar-item flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium cursor-pointer text-gray-600 hover:bg-gray-50 transition-colors" data-tab="portfolio">
+          <i class="fas fa-folder-open w-4"></i> Портфолио
+        </a>
+        <a onclick="showDashTab('resume-dash')" class="sidebar-item flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium cursor-pointer text-gray-600 hover:bg-gray-50 transition-colors" data-tab="resume-dash">
+          <i class="fas fa-file-alt w-4"></i> Моё резюме
+        </a>
+        <div class="border-t border-gray-100 pt-2 mt-2">
+          <a onclick="handleLogout()" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium cursor-pointer text-red-500 hover:bg-red-50 transition-colors">
+            <i class="fas fa-sign-out-alt w-4"></i> Выйти
+          </a>
+        </div>
+      </nav>
+    </div>
+    <div id="sidebar-overlay" class="sidebar-overlay" onclick="closeSidebar()"></div>
+
+    <!-- Main Content -->
+    <div class="flex-1 overflow-auto bg-gray-50">
+      <div class="flex items-center justify-between bg-white border-b border-gray-100 px-6 py-4 md:hidden">
+        <span class="font-bold text-gray-900">Личный кабинет</span>
+        <button onclick="openSidebar()" class="p-2 rounded-lg text-gray-500"><i class="fas fa-bars"></i></button>
+      </div>
+
+      <!-- Overview Tab -->
+      <div id="tab-overview" class="dash-tab p-6">
+        <div class="mb-6">
+          <h2 class="text-2xl font-black text-gray-900">Привет, <span id="dash-greeting-name">Студент</span>! 👋</h2>
+          <p class="text-gray-500 text-sm mt-1">Вот что происходит в твоём профиле</p>
+        </div>
+
+        <!-- Stats -->
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+          <div class="bg-white rounded-2xl p-4 shadow-sm border border-gray-100">
+            <div class="text-2xl font-black text-primary-600" id="stat-applications">0</div>
+            <div class="text-xs text-gray-500 mt-1">Откликов</div>
+          </div>
+          <div class="bg-white rounded-2xl p-4 shadow-sm border border-gray-100">
+            <div class="text-2xl font-black text-violet-600" id="stat-tasks">0</div>
+            <div class="text-xs text-gray-500 mt-1">Заданий</div>
+          </div>
+          <div class="bg-white rounded-2xl p-4 shadow-sm border border-gray-100">
+            <div class="text-2xl font-black text-green-600" id="stat-saved">0</div>
+            <div class="text-xs text-gray-500 mt-1">Сохранено</div>
+          </div>
+          <div class="bg-white rounded-2xl p-4 shadow-sm border border-gray-100">
+            <div class="text-2xl font-black text-yellow-600" id="stat-score">0</div>
+            <div class="text-xs text-gray-500 mt-1">% готовности</div>
+          </div>
+        </div>
+
+        <!-- What to improve -->
+        <div class="bg-gradient-to-r from-primary-50 to-violet-50 rounded-2xl p-6 mb-8 border border-primary-100">
+          <h3 class="font-bold text-gray-900 mb-4 flex items-center gap-2"><i class="fas fa-chart-line text-primary-500"></i>Что улучшить для стажировки</h3>
+          <div id="improvement-tips" class="space-y-3">
+            <div class="flex items-start gap-3 bg-white rounded-xl p-3">
+              <div class="w-8 h-8 bg-primary-100 rounded-lg flex items-center justify-center flex-shrink-0"><i class="fas fa-file-alt text-primary-600 text-sm"></i></div>
+              <div><div class="font-medium text-sm text-gray-900">Создай резюме</div><div class="text-xs text-gray-500">Работодатели хотят видеть структурированную информацию о тебе</div></div>
+              <button onclick="navigate('resume')" class="ml-auto text-xs bg-primary-600 text-white px-3 py-1 rounded-lg flex-shrink-0">Создать</button>
+            </div>
+            <div class="flex items-start gap-3 bg-white rounded-xl p-3">
+              <div class="w-8 h-8 bg-violet-100 rounded-lg flex items-center justify-center flex-shrink-0"><i class="fas fa-tasks text-violet-600 text-sm"></i></div>
+              <div><div class="font-medium text-sm text-gray-900">Выполни 3 задания</div><div class="text-xs text-gray-500">Задания добавятся в портфолио и покажут твои навыки</div></div>
+              <button onclick="navigate('tasks')" class="ml-auto text-xs bg-violet-600 text-white px-3 py-1 rounded-lg flex-shrink-0">Начать</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Recent applications -->
+        <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 mb-8">
+          <div class="flex items-center justify-between mb-4">
+            <h3 class="font-bold text-gray-900">Последние отклики</h3>
+            <button onclick="showDashTab('applications')" class="text-sm text-primary-600 hover:text-primary-700">Все →</button>
+          </div>
+          <div id="recent-applications">
+            <div class="text-sm text-gray-500 text-center py-4">Пока нет откликов. <button onclick="navigate('internships')" class="text-primary-600 font-medium">Найди стажировку →</button></div>
+          </div>
+        </div>
+
+        <!-- Recommended -->
+        <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
+          <h3 class="font-bold text-gray-900 mb-4">Рекомендованные стажировки</h3>
+          <div id="recommended-internships" class="grid md:grid-cols-2 gap-4">
+            <div class="text-sm text-gray-500 text-center py-4 col-span-2">Заполни профиль с желаемым направлением для рекомендаций</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Profile Tab -->
+      <div id="tab-profile" class="dash-tab hidden p-6">
+        <h2 class="text-2xl font-black text-gray-900 mb-6">Мой профиль</h2>
+        <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
+          <div class="flex items-center gap-4 mb-6">
+            <div class="w-16 h-16 bg-gradient-to-br from-primary-500 to-violet-500 rounded-2xl flex items-center justify-center text-white font-bold text-2xl" id="profile-avatar-big">А</div>
+            <div>
+              <div class="font-bold text-xl text-gray-900" id="profile-name-display">Студент</div>
+              <div class="text-sm text-gray-500" id="profile-detail-display">—</div>
+            </div>
+          </div>
+          <form onsubmit="handleUpdateProfile(event)">
+            <div class="grid md:grid-cols-2 gap-4">
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Имя и фамилия</label>
+                <input type="text" id="prof-name" class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary-300">
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Город</label>
+                <input type="text" id="prof-city" class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary-300">
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Университет</label>
+                <input type="text" id="prof-university" class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary-300">
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Специальность</label>
+                <input type="text" id="prof-major" class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary-300">
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Курс</label>
+                <select id="prof-year" class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary-300">
+                  <option value="1">1 курс</option><option value="2">2 курс</option><option value="3">3 курс</option><option value="4">4 курс</option><option value="5">5 курс</option>
+                </select>
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Желаемое направление</label>
+                <select id="prof-field" class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary-300">
+                  <option value="">Выберите направление</option>
+                  <option value="frontend">Frontend</option><option value="backend">Backend</option>
+                  <option value="data">Аналитика</option><option value="design">Дизайн</option>
+                  <option value="marketing">Маркетинг</option><option value="product">Product</option>
+                  <option value="hr">HR</option><option value="mobile">Mobile</option>
+                </select>
+              </div>
+              <div class="col-span-2">
+                <label class="block text-sm font-medium text-gray-700 mb-1">О себе</label>
+                <textarea id="prof-about" rows="3" class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary-300 resize-none"></textarea>
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Навыки</label>
+                <input type="text" id="prof-skills" placeholder="Python, SQL, Excel (через запятую)" class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary-300">
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Языки</label>
+                <input type="text" id="prof-languages" placeholder="Русский, Английский B2 (через запятую)" class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary-300">
+              </div>
+            </div>
+            <div class="mt-4">
+              <button type="submit" class="bg-primary-600 text-white px-6 py-2.5 rounded-xl font-semibold hover:bg-primary-700 transition-colors text-sm">
+                <i class="fas fa-save mr-2"></i>Сохранить
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- Applications Tab -->
+      <div id="tab-applications" class="dash-tab hidden p-6">
+        <h2 class="text-2xl font-black text-gray-900 mb-6">Мои отклики</h2>
+        <div id="applications-list" class="space-y-4">
+          <div class="skeleton h-20 rounded-2xl"></div>
+          <div class="skeleton h-20 rounded-2xl"></div>
+        </div>
+      </div>
+
+      <!-- Saved Tab -->
+      <div id="tab-saved" class="dash-tab hidden p-6">
+        <h2 class="text-2xl font-black text-gray-900 mb-6">Сохранённые стажировки</h2>
+        <div id="saved-list" class="grid md:grid-cols-2 gap-4">
+          <div class="skeleton h-48 rounded-2xl"></div>
+          <div class="skeleton h-48 rounded-2xl"></div>
+        </div>
+      </div>
+
+      <!-- Portfolio Tab -->
+      <div id="tab-portfolio" class="dash-tab hidden p-6">
+        <h2 class="text-2xl font-black text-gray-900 mb-6">Моё портфолио</h2>
+        <div id="portfolio-content">
+          <div class="skeleton h-32 rounded-2xl mb-4"></div>
+          <div class="skeleton h-32 rounded-2xl"></div>
+        </div>
+      </div>
+
+      <!-- Resume Dash Tab -->
+      <div id="tab-resume-dash" class="dash-tab hidden p-6">
+        <h2 class="text-2xl font-black text-gray-900 mb-6">Моё резюме</h2>
+        <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 text-center">
+          <div class="w-16 h-16 bg-primary-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
+            <i class="fas fa-file-alt text-primary-600 text-2xl"></i>
+          </div>
+          <h3 class="font-bold text-gray-900 mb-2">Создай или отредактируй резюме</h3>
+          <p class="text-gray-500 text-sm mb-4">Перейди в конструктор резюме чтобы создать профессиональное CV</p>
+          <button onclick="navigate('resume')" class="bg-primary-600 text-white px-6 py-2.5 rounded-xl font-medium hover:bg-primary-700 transition-colors">
+            <i class="fas fa-edit mr-2"></i>Редактировать резюме
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== EMPLOYER DASHBOARD ==================== -->
+<div id="page-employer-dashboard" class="page">
+  <div class="flex min-h-screen">
+    <div class="sidebar w-64 bg-white border-r border-gray-100 flex-shrink-0 flex flex-col">
+      <div class="p-6 border-b border-gray-100">
+        <div class="flex items-center gap-3">
+          <div class="w-12 h-12 bg-gradient-to-br from-green-400 to-teal-500 rounded-2xl flex items-center justify-center text-white font-bold text-lg" id="emp-avatar">К</div>
+          <div>
+            <div class="font-bold text-gray-900 text-sm" id="emp-company-name-nav">Компания</div>
+            <div class="text-xs text-gray-500">Работодатель</div>
+          </div>
+        </div>
+      </div>
+      <nav class="flex-1 p-4 space-y-1">
+        <a onclick="showEmpTab('emp-overview')" class="emp-sidebar-item flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium cursor-pointer text-gray-600 hover:bg-gray-50 transition-colors sidebar-active" data-tab="emp-overview">
+          <i class="fas fa-th-large w-4"></i> Обзор
+        </a>
+        <a onclick="showEmpTab('emp-vacancies')" class="emp-sidebar-item flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium cursor-pointer text-gray-600 hover:bg-gray-50 transition-colors" data-tab="emp-vacancies">
+          <i class="fas fa-briefcase w-4"></i> Мои вакансии
+        </a>
+        <a onclick="showEmpTab('emp-applications')" class="emp-sidebar-item flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium cursor-pointer text-gray-600 hover:bg-gray-50 transition-colors" data-tab="emp-applications">
+          <i class="fas fa-inbox w-4"></i> Отклики
+        </a>
+        <a onclick="showEmpTab('emp-profile')" class="emp-sidebar-item flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium cursor-pointer text-gray-600 hover:bg-gray-50 transition-colors" data-tab="emp-profile">
+          <i class="fas fa-building w-4"></i> Профиль
+        </a>
+        <div class="border-t border-gray-100 pt-2 mt-2">
+          <a onclick="handleLogout()" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium cursor-pointer text-red-500 hover:bg-red-50 transition-colors">
+            <i class="fas fa-sign-out-alt w-4"></i> Выйти
+          </a>
+        </div>
+      </nav>
+    </div>
+
+    <div class="flex-1 overflow-auto bg-gray-50">
+      <!-- Employer Overview Tab -->
+      <div id="tab-emp-overview" class="emp-tab p-6">
+        <div class="flex items-center justify-between mb-6">
+          <h2 class="text-2xl font-black text-gray-900">Кабинет работодателя</h2>
+          <button onclick="openCreateVacancyModal()" class="bg-primary-600 text-white px-4 py-2.5 rounded-xl font-medium text-sm hover:bg-primary-700 transition-colors flex items-center gap-2">
+            <i class="fas fa-plus"></i> Новая вакансия
+          </button>
+        </div>
+        <div class="grid grid-cols-3 gap-4 mb-8">
+          <div class="bg-white rounded-2xl p-4 shadow-sm border border-gray-100 text-center">
+            <div class="text-2xl font-black text-primary-600" id="emp-stat-vacancies">0</div>
+            <div class="text-xs text-gray-500 mt-1">Вакансий</div>
+          </div>
+          <div class="bg-white rounded-2xl p-4 shadow-sm border border-gray-100 text-center">
+            <div class="text-2xl font-black text-green-600" id="emp-stat-applications">0</div>
+            <div class="text-xs text-gray-500 mt-1">Откликов</div>
+          </div>
+          <div class="bg-white rounded-2xl p-4 shadow-sm border border-gray-100 text-center">
+            <div class="text-2xl font-black text-violet-600" id="emp-stat-pending">0</div>
+            <div class="text-xs text-gray-500 mt-1">Ожидают</div>
+          </div>
+        </div>
+        <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
+          <h3 class="font-bold text-gray-900 mb-4">Последние отклики</h3>
+          <div id="emp-recent-apps">
+            <div class="text-sm text-gray-500 text-center py-4">Загрузка...</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Vacancies Tab -->
+      <div id="tab-emp-vacancies" class="emp-tab hidden p-6">
+        <div class="flex items-center justify-between mb-6">
+          <h2 class="text-2xl font-black text-gray-900">Мои вакансии</h2>
+          <button onclick="openCreateVacancyModal()" class="bg-primary-600 text-white px-4 py-2.5 rounded-xl font-medium text-sm hover:bg-primary-700">
+            <i class="fas fa-plus mr-2"></i>Создать вакансию
+          </button>
+        </div>
+        <div id="emp-vacancies-list" class="space-y-4">
+          <div class="skeleton h-24 rounded-2xl"></div>
+          <div class="skeleton h-24 rounded-2xl"></div>
+        </div>
+      </div>
+
+      <!-- Employer Applications Tab -->
+      <div id="tab-emp-applications" class="emp-tab hidden p-6">
+        <h2 class="text-2xl font-black text-gray-900 mb-6">Отклики кандидатов</h2>
+        <div id="emp-applications-list" class="space-y-4">
+          <div class="skeleton h-24 rounded-2xl"></div>
+        </div>
+      </div>
+
+      <!-- Employer Profile Tab -->
+      <div id="tab-emp-profile" class="emp-tab hidden p-6">
+        <h2 class="text-2xl font-black text-gray-900 mb-6">Профиль компании</h2>
+        <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
+          <form onsubmit="updateEmployerProfile(event)">
+            <div class="space-y-4">
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Название компании</label>
+                <input type="text" id="emp-prof-name" class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary-300">
+              </div>
+              <div class="grid grid-cols-2 gap-4">
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-1">Индустрия</label>
+                  <input type="text" id="emp-prof-industry" class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary-300">
+                </div>
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-1">Контактное лицо</label>
+                  <input type="text" id="emp-prof-contact" class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary-300">
+                </div>
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Описание компании</label>
+                <textarea id="emp-prof-desc" rows="4" class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary-300 resize-none"></textarea>
+              </div>
+            </div>
+            <button type="submit" class="mt-4 bg-primary-600 text-white px-6 py-2.5 rounded-xl font-medium text-sm hover:bg-primary-700">
+              <i class="fas fa-save mr-2"></i>Сохранить
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== MODALS ==================== -->
+
+<!-- Internship Detail Modal -->
+<div id="internship-modal" class="hidden fixed inset-0 z-50 modal-overlay flex items-end md:items-center justify-center p-0 md:p-4" onclick="if(event.target===this)closeModal('internship-modal')">
+  <div class="bg-white w-full md:max-w-2xl md:rounded-2xl overflow-hidden max-h-screen md:max-h-[90vh] overflow-y-auto animate-slide-up">
+    <div id="internship-modal-content">Loading...</div>
+  </div>
+</div>
+
+<!-- Task Modal -->
+<div id="task-modal" class="hidden fixed inset-0 z-50 modal-overlay flex items-center justify-center p-4" onclick="if(event.target===this)closeModal('task-modal')">
+  <div class="bg-white rounded-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto animate-slide-up">
+    <div id="task-modal-content">Loading...</div>
+  </div>
+</div>
+
+<!-- Apply Modal -->
+<div id="apply-modal" class="hidden fixed inset-0 z-50 modal-overlay flex items-center justify-center p-4" onclick="if(event.target===this)closeModal('apply-modal')">
+  <div class="bg-white rounded-2xl w-full max-w-lg animate-slide-up p-6">
+    <h3 class="text-xl font-bold text-gray-900 mb-4">Откликнуться на стажировку</h3>
+    <div class="mb-4">
+      <label class="block text-sm font-medium text-gray-700 mb-1">Сопроводительное письмо <span class="text-gray-400">(необязательно)</span></label>
+      <textarea id="cover-letter" rows="4" placeholder="Расскажи почему тебя интересует эта стажировка, какие навыки ты можешь применить..." class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary-300 resize-none"></textarea>
+    </div>
+    <div class="flex gap-3">
+      <button onclick="closeModal('apply-modal')" class="flex-1 border border-gray-200 text-gray-700 py-2.5 rounded-xl font-medium text-sm">Отмена</button>
+      <button onclick="submitApplication()" class="flex-1 bg-primary-600 text-white py-2.5 rounded-xl font-semibold text-sm hover:bg-primary-700">Отправить отклик</button>
+    </div>
+  </div>
+</div>
+
+<!-- Create Vacancy Modal -->
+<div id="create-vacancy-modal" class="hidden fixed inset-0 z-50 modal-overlay flex items-center justify-center p-4" onclick="if(event.target===this)closeModal('create-vacancy-modal')">
+  <div class="bg-white rounded-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto animate-slide-up p-6">
+    <h3 class="text-xl font-bold text-gray-900 mb-6">Создать вакансию</h3>
+    <form onsubmit="handleCreateVacancy(event)">
+      <div class="space-y-4">
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Название *</label>
+          <input type="text" id="vac-title" required placeholder="Стажёр Frontend разработчик" class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary-300">
+        </div>
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Направление</label>
+            <select id="vac-field" class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary-300">
+              <option value="frontend">Frontend</option><option value="backend">Backend</option>
+              <option value="data">Аналитика</option><option value="design">Дизайн</option>
+              <option value="marketing">Маркетинг</option><option value="product">Product</option>
+              <option value="hr">HR</option><option value="mobile">Mobile</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Уровень</label>
+            <select id="vac-level" class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary-300">
+              <option value="beginner">Beginner</option><option value="intern" selected>Intern</option><option value="junior">Junior</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Формат</label>
+            <select id="vac-format" class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary-300">
+              <option value="offline">Офис</option><option value="online">Удалённо</option><option value="hybrid">Гибрид</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Город</label>
+            <input type="text" id="vac-city" list="kz-cities-vac" placeholder="Алматы" class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary-300">
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Зарплата</label>
+            <input type="text" id="vac-salary" placeholder="250 000 – 350 000 ₸/мес" class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary-300">
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Дедлайн</label>
+            <input type="date" id="vac-deadline" class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary-300">
+          </div>
+        </div>
+        <div class="flex items-center gap-2">
+          <input type="checkbox" id="vac-paid" class="rounded"><label for="vac-paid" class="text-sm text-gray-700">Оплачиваемая стажировка</label>
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Описание</label>
+          <textarea id="vac-description" rows="3" class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary-300 resize-none"></textarea>
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Требования</label>
+          <textarea id="vac-requirements" rows="2" class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary-300 resize-none"></textarea>
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Обязанности</label>
+          <textarea id="vac-responsibilities" rows="2" class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary-300 resize-none"></textarea>
+        </div>
+      </div>
+      <!-- KZ Cities datalist for vacancy -->
+      <datalist id="kz-cities-vac">
+        <option value="Алматы"><option value="Астана"><option value="Шымкент">
+        <option value="Қарағанды"><option value="Актобе"><option value="Тараз">
+        <option value="Павлодар"><option value="Семей"><option value="Өскемен">
+        <option value="Удалённо">
+      </datalist>
+    <div class="flex gap-3 mt-6">
+        <button type="button" onclick="closeModal('create-vacancy-modal')" class="flex-1 border border-gray-200 text-gray-700 py-2.5 rounded-xl font-medium text-sm">Отмена</button>
+        <button type="submit" class="flex-1 bg-primary-600 text-white py-2.5 rounded-xl font-semibold text-sm hover:bg-primary-700">Создать вакансию</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Task Submit Modal -->
+<div id="submit-task-modal" class="hidden fixed inset-0 z-50 modal-overlay flex items-center justify-center p-4" onclick="if(event.target===this)closeModal('submit-task-modal')">
+  <div class="bg-white rounded-2xl w-full max-w-lg animate-slide-up p-6">
+    <h3 class="text-xl font-bold text-gray-900 mb-2">Отправить решение</h3>
+    <p class="text-gray-500 text-sm mb-4" id="submit-task-name">Задание</p>
+    <div class="space-y-4">
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1">Ссылка на решение (GitHub, Google Drive, Figma...)</label>
+        <input type="url" id="solution-url" placeholder="https://github.com/yourname/project" class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary-300">
+      </div>
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1">Комментарий к решению</label>
+        <textarea id="solution-comment" rows="3" placeholder="Опиши свой подход и что ты реализовал..." class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary-300 resize-none"></textarea>
+      </div>
+    </div>
+    <div class="flex gap-3 mt-6">
+      <button onclick="closeModal('submit-task-modal')" class="flex-1 border border-gray-200 text-gray-700 py-2.5 rounded-xl font-medium text-sm">Отмена</button>
+      <button onclick="submitTaskSolution()" class="flex-1 bg-primary-600 text-white py-2.5 rounded-xl font-semibold text-sm hover:bg-primary-700">Отправить</button>
+    </div>
+  </div>
+</div>
+
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script src="/static/app.js"></script>
+</body>
+</html>
